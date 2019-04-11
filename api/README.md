@@ -8,12 +8,12 @@ validate it and save into HBase.
 
 Setup virtual env
 
-  make setup-venv
+    make setup-venv
 
 Running api
   
-  make run-api
+    make run-api
 
 Running tests
   
-  make test
+    make test
