@@ -1,0 +1,9 @@
+{
+  "title": "Shema for data model 1",
+  "type": "object",
+  "properties": {
+    "pk": {"type": "string"},
+    "score": {"type": "string"}
+  },
+  "required": ["pk", "score"]
+}

@@ -1,0 +1,10 @@
+docker==3.7.2
+falcon==1.4.1
+falcon-prometheus==0.1.0
+happybase==1.1.0
+happybase-mock==0.10.0
+pytest==4.4.0
+pytest-cov==2.6.1
+pylint==2.3.1
+gunicorn==19.9.0
+jsonschema==3.0.1
