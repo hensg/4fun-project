@@ -2,25 +2,28 @@
 
 **Putter JOB** `putter/putter_job.py`
 
-Process jsonlines and post data to API
+Spark job that process jsonlines file and post data to API
 
 Job requires 3 args:
 - API host and port to post data
-- data model resource API path (host:port/**model1**)
+- resource API path (host:port/**model1**)
 - jsonline file
+
+Environment requirements:
+- HBase docker running
+- API docker running
 
 **Run job with sample in docker**
 
-  make setup-venv
-  source venv/bin/activate
-  ./generate_jsonlines.py
-  ./client.py localhost:8000 model1 sample.jsonl
+    make setup-venv
+    source venv/bin/activate
+    ./generate_jsonlines.py
+    ./client.py localhost:8000 model1 sample.jsonl
 
 - make setup-venv: will setup virtual env with requirements.
-- generate_jsonlines.py: create a file containing json model1 lines
-- client.py: execute job in spark docker container
+- generate_jsonlines.py: create a file containing json model1 schema lines
+- client.py: execute job in a spark docker container
 
-* Requires HBase and API docker running
 
 ### TODO:
  - [x] generate jsonlines files
