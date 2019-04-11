@@ -6,7 +6,7 @@ Spark job that process jsonlines file and post data to API
 
 Job requires 3 args:
 - API host and port to post data
-- resource API path (host:port/**model1**)
+- resource API path (host:port/**model1s**)
 - jsonline file
 
 Environment requirements:
