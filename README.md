@@ -1,4 +1,5 @@
 # Project
+[![CircleCI](https://circleci.com/gh/hensg/4fun-project.svg?style=shield&circle-token=eec193b24cd71729f92ccc6b1345df4ecc57c2d4)](https://circleci.com/gh/hensg/4fun-project)
 
 An API written in Python 3.6 using falcon framework.
 
