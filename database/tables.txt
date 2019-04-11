@@ -1,0 +1,3 @@
+list
+create 'datamodel1', 'score'
+describe 'datamodel1'
