@@ -19,8 +19,8 @@ def create_app(db_manager):
         ]
     )
     api.add_route('/', app.resources.status.Status(db_manager))
-    api.add_route('/model1', app.resources.model1.Collection(model1dao))
-    api.add_route('/model1/{key}', app.resources.model1.Item(model1dao))
+    api.add_route('/model1s', app.resources.model1.Collection(model1dao))
+    api.add_route('/model1s/{key}', app.resources.model1.Item(model1dao))
     api.add_route('/metrics', prometheus)
 
     api.add_error_handler(TTransportException,

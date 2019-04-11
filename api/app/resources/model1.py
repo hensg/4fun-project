@@ -13,17 +13,21 @@ class Collection:
         self.dao = dao
 
     def on_get(self, req, resp):
-        """Get a sample from database, not full collection"""
+        """Get from data using pagination"""
 
         logging.debug('on_get collection scanning') 
-        scanned_data = self.dao.scan()
+
+        row_start = req.params.get('row_start')
+        row_stop = req.params.get('row_stop')
+
+        scanned_data = self.dao.scan(row_start, row_stop, limit=100)
 
         if scanned_data:
             model1s = [
                 Model1.from_hbase(k, v).to_dict()
                 for (k, v) in scanned_data
             ]
-            resp.body = json.dumps(model1s)
+            resp.media = model1s
             resp.status = falcon.HTTP_200
         else:
             resp.status = falcon.HTTP_200
