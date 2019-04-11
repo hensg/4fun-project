@@ -31,7 +31,7 @@ def client(mock_db):
     return testing.TestClient(app.app.create_app(mock_db))
 
 def test_get_collection_empty(client):
-    result = client.simulate_get(path='/model1')
+    result = client.simulate_get(path='/model1s')
     assert result.status == falcon.HTTP_200
     assert result.text == ''
 
@@ -40,26 +40,37 @@ def test_get_collection_with_two_values(mock_db, client):
         conn.table(Model1DAO.TABLE_NAME).put(b'a', {b'score:score': b'0.9'})
         conn.table(Model1DAO.TABLE_NAME).put(b'b', {b'score:score': b'0.2'})
 
-    result = client.simulate_get(path='/model1')
+    result = client.simulate_get(path='/model1s')
     assert result.json == [
         {'pk': 'a', 'score': '0.9'},
         {'pk': 'b', 'score': '0.2'}
     ]
 
+def test_get_collection_with_pagination(mock_db, client):
+    with mock_db.pool().connection() as conn:
+        conn.table(Model1DAO.TABLE_NAME).put(b'a', {b'score:score': b'0.1'})
+        conn.table(Model1DAO.TABLE_NAME).put(b'b', {b'score:score': b'0.2'})
+        conn.table(Model1DAO.TABLE_NAME).put(b'c', {b'score:score': b'0.3'})
+        conn.table(Model1DAO.TABLE_NAME).put(b'd', {b'score:score': b'0.4'})
+        conn.table(Model1DAO.TABLE_NAME).put(b'e', {b'score:score': b'0.5'})
+
+    result = client.simulate_get(path='/model1s', query_string='row_start=c&row_stop=e')
+    assert result.json == [
+        {'pk': 'c', 'score': '0.3'},
+        {'pk': 'd', 'score': '0.4'}
+    ]
+
 def test_post_collection_success(client):
     body = {'pk': 'a', 'score': '0.9'}
     result = client.simulate_post(
-            path='/model1',
+            path='/model1s',
             json=body)
     assert result.status == falcon.HTTP_201
 
 def test_post_collection_without_body(client):
     body = None
     result = client.simulate_post(
-            path='/model1',
-            headers={
-                'Content-Type': 'application/json'
-            },
+            path='/model1s',
             json=body)
     assert result.status == falcon.HTTP_400
     assert result.json == {
@@ -69,7 +80,7 @@ def test_post_collection_without_body(client):
 def test_post_collection_with_wrong_schema(client):
     body = {'test':'test'}
     result = client.simulate_post(
-            path='/model1',
+            path='/model1s',
             json=body)
     assert result.status == falcon.HTTP_400
     assert result.json == {'title': 'Failed data validation',
@@ -78,31 +89,21 @@ def test_post_collection_with_wrong_schema(client):
 def test_put_item_with_success(client):
     body = {'pk': 'a', 'score': '0.9'}
     result = client.simulate_put(
-            path='/model1/a',
+            path='/model1s/a',
             json=body)
     assert result.status == falcon.HTTP_200
 
 def test_put_item_with_wrong_body_pk(client):
     body = {'pk': 'xxxxxa', 'score': '0.9'}
     result = client.simulate_put(
-            path='/model1/a',
+            path='/model1s/a',
             json=body)
     assert result.status == falcon.HTTP_400
-
-#def test_put_item_without_auth(client):
-#    body = {'pk': 'xxxxxa', 'score': '0.9'}
-#    result = client.simulate_put(
-#            path='/model1/a',
-#            json=body)
-#    assert result.status == falcon.HTTP_401
 
 def test_put_item_without_body(client):
     body = None
     result = client.simulate_put(
-            path='/model1/a',
-            headers={
-                'Content-Type': 'application/json'
-            },
+            path='/model1s/a',
             json=body)
     assert result.status == falcon.HTTP_400
     assert result.json == {
@@ -112,10 +113,7 @@ def test_put_item_without_body(client):
 def test_put_item_with_invalid_json_schema(client):
     body = {'bla':'wololo'}
     result = client.simulate_put(
-            path='/model1/a',
-            headers={
-                'Content-Type': 'application/json'
-            },
+            path='/model1s/a',
             json=body)
     assert result.status == falcon.HTTP_400
     assert result.json == {'title': 'Failed data validation',
@@ -125,18 +123,18 @@ def test_get_item_with_success(mock_db, client):
     with mock_db.pool().connection() as conn:
         conn.table(Model1DAO.TABLE_NAME).put(b'a', {b'score:score': b'0.9'})
 
-    result = client.simulate_get(path='/model1/a')
+    result = client.simulate_get(path='/model1s/a')
 
     assert result.status == falcon.HTTP_200
     assert result.json == {'pk': 'a', 'score': '0.9'}
 
 def test_get_item_not_found(client):
-    result = client.simulate_get(path='/model1/a')
+    result = client.simulate_get(path='/model1s/a')
     assert result.status == falcon.HTTP_404
 
 def test_delete_item_with_success(mock_db, client):
     with mock_db.pool().connection() as conn:
         conn.table(Model1DAO.TABLE_NAME).put(b'a', {b'score:score': b'0.9'})
 
-    result = client.simulate_delete(path='/model1/a')
+    result = client.simulate_delete(path='/model1s/a')
     assert result.status == falcon.HTTP_204

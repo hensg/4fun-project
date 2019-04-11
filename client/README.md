@@ -18,7 +18,7 @@ Environment requirements:
     make setup-venv
     source venv/bin/activate
     ./generate_jsonlines.py
-    ./client.py localhost:8000 model1 sample.jsonl
+    ./client.py localhost:8000 model1s sample.jsonl
 
 - make setup-venv: will setup virtual env with requirements.
 - generate_jsonlines.py: create a file containing json model1 schema lines

@@ -10,8 +10,8 @@ parser = argparse.ArgumentParser(
 parser.add_argument('api_host', type=str,
        help='API host:port endpoint to send data')
 parser.add_argument('model', type=str,
-       help='Data model to process and send to API',
-       choices=['model1'])
+       help='API resource model to process and send to API',
+       choices=['model1s'])
 parser.add_argument('path', type=str,
        help='Paths with jsonlines files to process')
 

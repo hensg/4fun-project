@@ -20,12 +20,12 @@ class Model1DAO:
         with self.db_manager.pool().connection() as conn:
             conn.table(self.TABLE_NAME).put(key, values)
 
-    def scan(self, batch_size=50, limit=100):
+    def scan(self, row_start=None, row_stop=None, limit=100):
         """scan a batch of rows from hbase, a sample"""
         sample_rows = []
         with self.db_manager.pool().connection() as conn:
             table = conn.table(self.TABLE_NAME)
-            for row in table.scan(batch_size=batch_size, limit=limit):
+            for row in table.scan(row_start=row_start, row_stop=row_stop, limit=limit):
                 sample_rows.append(row)
         return sample_rows
 
