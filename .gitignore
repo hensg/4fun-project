@@ -1,5 +1,6 @@
 database/data/
-
+client/sample.jsonl
+client/joboutput/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
