@@ -36,7 +36,7 @@ if jsonlines_rdd.isEmpty():
     log.info('There is no text file in path: {}'.format(path))
     sys.exit(0)
 
-def put_into_api(line, attempt=1):
+def post_into_api(line, attempt=1):
     headers = {'Content-Type': 'application/json'}
     try:
         response = requests.post('http://{}/{}'.format(api_host_port, model), headers=headers, data=line)
@@ -46,14 +46,14 @@ def put_into_api(line, attempt=1):
         elif response.status_code == 503 and attempt <= 3:
             # hold for some seconds and retry
             time.sleep(3**attempt)
-            return put_into_api(line, attempt+1)
+            return post_into_api(line, attempt+1)
 
         else:
             return {'success': False, 'http_status': response.status_code, 'line': line, 'err': response.text}
     except requests.exceptions.ConnectionError as e:
         return {'success': False, 'err': 'Failed to connect to API'}
 
-sent = jsonlines_rdd.map(put_into_api).cache()
+sent = jsonlines_rdd.map(post_into_api).cache()
 
 count_success = sent.filter(lambda status_dict: status_dict['success']).count()
 faileds = sent.filter(lambda status_dict: not status_dict['success'])

@@ -38,10 +38,15 @@ class Collection:
         model1 = Model1.from_json(payload)
 
         logging.debug('on_post collection with key: {}', model1.pk)
-        self.dao.put(model1.pk, model1.to_hbase())
-
-        resp.status = falcon.HTTP_201
-        resp.location = '/model1/{}'.format(model1.pk)
+        if self.dao.get(model1.pk):
+            resp.status = falcon.HTTP_409
+            resp.media = {
+                'err': 'Model1 with pk ({}) already exists, use PUT to update!'.format(model1.pk)
+            }
+        else:
+            self.dao.put(model1.pk, model1.to_hbase())
+            resp.status = falcon.HTTP_201
+            resp.location = '/model1s/{}'.format(model1.pk)
 
 class Item:
 
