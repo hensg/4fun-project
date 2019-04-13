@@ -8,10 +8,13 @@ import json
 import time
 from pyspark import SparkContext, SparkConf
 
-if len(sys.argv) <= 3:
-    raise 'Missing arg! Type <host:port> <model> <path> to process files and send to host:port/model'
+if len(sys.argv) != 5:
+    raise '''Missing args! 
+    Type <host:port> <model> <path> <overwrite_if_exists>
+    to process files and send to host:port/model'''
 
-api_host_port, model, path = sys.argv[1], sys.argv[2], sys.argv[3]
+api_host_port, model, path, overwrite_if_exists = sys.argv[1:]
+overwrite_if_exists = True if overwrite_if_exists.lower() == 'true' else False
 
 def get_logger():
     log = logging.getLogger(__file__)
@@ -36,24 +39,35 @@ if jsonlines_rdd.isEmpty():
     log.info('There is no text file in path: {}'.format(path))
     sys.exit(0)
 
-def post_into_api(line, attempt=1):
+def send_to_api(line, method='POST', attempt=1):
     headers = {'Content-Type': 'application/json'}
     try:
-        response = requests.post('http://{}/{}'.format(api_host_port, model), headers=headers, data=line)
+        if method == 'POST':
+            response = requests.post('http://{}/{}'.format(api_host_port, model),
+                    headers=headers, data=line)
+        elif method == 'PUT':
+            pk = json.loads(line).get('pk', None)
+            response = requests.put('http://{}/{}/{}'.format(api_host_port, model, pk),
+                    headers=headers, data=line)
+
         if response:
             return {'success': True, 'http_status': response.status_code}
 
         elif response.status_code == 503 and attempt <= 3:
             # hold for some seconds and retry
             time.sleep(3**attempt)
-            return post_into_api(line, attempt+1)
+            return send_to_api(line, attempt=attempt+1)
+
+        elif response.status_code == 409 and overwrite_if_exists:
+            return send_to_api(line, method='PUT')
 
         else:
             return {'success': False, 'http_status': response.status_code, 'line': line, 'err': response.text}
+
     except requests.exceptions.ConnectionError as e:
         return {'success': False, 'err': 'Failed to connect to API'}
 
-sent = jsonlines_rdd.map(post_into_api).cache()
+sent = jsonlines_rdd.map(send_to_api).cache()
 
 count_success = sent.filter(lambda status_dict: status_dict['success']).count()
 faileds = sent.filter(lambda status_dict: not status_dict['success'])

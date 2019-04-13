@@ -1,3 +1,5 @@
 list
-create 'datamodel1', 'score'
-describe 'datamodel1'
+create 'model1', 'value'
+describe 'model1'
+create 'model2', 'value'
+describe 'model2'

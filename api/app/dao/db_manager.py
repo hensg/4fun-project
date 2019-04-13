@@ -1,5 +1,4 @@
 import happybase
-import app.dao.model1
 
 class DBManager:
 
