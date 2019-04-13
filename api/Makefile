@@ -13,4 +13,4 @@ lint:
 	venv/bin/python3.6 -m pylint app/
 
 test:
-	venv/bin/python3.6 -m pytest --cov=app/ app-tests/
+	venv/bin/python3.6 -m pytest --cov=app/ app-tests/ -v

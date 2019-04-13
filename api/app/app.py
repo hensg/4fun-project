@@ -2,15 +2,15 @@
 import falcon
 from falcon_prometheus import PrometheusMiddleware
 from thriftpy.transport import TTransportException
-import app.dao.model1
-import app.resources.model1
+import app.dao.generic
+import app.resources.generic
 import app.resources.status
 from app.dao.db_manager import DBManager
-from app.handlers.thrift_exception_handler import ThriftExpcetionHandler
+from app.handlers.thrift_exception import ThriftExpcetionHandler
 
 def create_app(db_manager):
     """Create falcon API"""
-    model1dao = app.dao.model1.Model1DAO(db_manager)
+    model_dao = app.dao.generic.GenericDAO(db_manager)
 
     prometheus = PrometheusMiddleware()
     api = falcon.API(
@@ -19,8 +19,8 @@ def create_app(db_manager):
         ]
     )
     api.add_route('/', app.resources.status.Status(db_manager))
-    api.add_route('/model1s', app.resources.model1.Collection(model1dao))
-    api.add_route('/model1s/{key}', app.resources.model1.Item(model1dao))
+    api.add_route('/{model_name}', app.resources.generic.Collection(model_dao))
+    api.add_route('/{model_name}/{key}', app.resources.generic.Item(model_dao))
     api.add_route('/metrics', prometheus)
 
     api.add_error_handler(TTransportException,

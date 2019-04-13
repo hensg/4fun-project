@@ -9,17 +9,19 @@ parser = argparse.ArgumentParser(
 )
 parser.add_argument('api_host', type=str,
        help='API host:port endpoint to send data')
-parser.add_argument('model', type=str,
-       help='API resource model to process and send to API',
-       choices=['model1s'])
+parser.add_argument('model', type=str, choices=['model1', 'model2'],
+       help='API resource model to process and send to API')
 parser.add_argument('path', type=str,
        help='Paths with jsonlines files to process')
+parser.add_argument('--overwrite-if-exists', default=False, action="store_true",
+       help='Overwrite data if exists') 
 
 args = parser.parse_args()
 
 host = args.api_host
 model = args.model
 path = args.path
+overwrite_if_exists = args.overwrite_if_exists
 
 DOCKER_IMAGE_NAME='client-putter'
 
@@ -35,7 +37,7 @@ except docker.errors.ImageNotFound:
 
 c = dc.containers.run(
     image='client-putter',
-    command='/putter_job.py {} {} /{}'.format(host, model, path),
+    command='/putter_job.py {} {} /{} {}'.format(host, model, path, overwrite_if_exists),
     network_mode='host',
     remove=True,
     detach=True,
