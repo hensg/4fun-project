@@ -69,7 +69,7 @@ def test_get_collection_with_pagination(mock_db, client):
     ]
 
 def test_post_collection_success(client):
-    body = {'pk': 'a', 'score': '0.9'}
+    body = {'pk': 'a', 'score': '0.9', 'modelName': 'model1'}
     result = client.simulate_post(
             path='/model1',
             json=body)
@@ -95,7 +95,7 @@ def test_post_collection_with_wrong_schema(client):
             'description': '"pk" is a required property for all models'}
 
 def test_put_item_with_success(client):
-    body = {'pk': 'a', 'score': '0.9'}
+    body = {'pk': 'a', 'score': '0.9', 'modelName': 'model2'}
     result = client.simulate_put(
             path='/model1/a',
             json=body)

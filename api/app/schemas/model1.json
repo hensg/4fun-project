@@ -3,7 +3,8 @@
   "type": "object",
   "properties": {
     "pk": {"type": "string"},
-    "score": {"type": "string"}
+    "score": {"type": "string"},
+    "modelName": {"type": "string"}
   },
-  "required": ["pk", "score"]
+  "required": ["pk", "score", "modelName"]
 }

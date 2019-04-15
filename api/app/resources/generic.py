@@ -10,27 +10,34 @@ class SchemaValidator:
     def __init__(self):
         self.schema_dict = {}
 
-    def __get_schema(self, model_name):
-        schema = self.schema_dict.get(model_name)
-        if not schema:
-            try:
-                schema = json.loads(open('app/schemas/{}.json'.format(model_name)).read())
-                self.schema_dict[model_name] = schema
-            except FileNotFoundError:
-                raise falcon.HTTPBadRequest('Missing schema!',
-                        'Model schema doesn\'t exists in API, please create it!')
-        return schema
-
-    def validate(self, json, model_name): 
-        if not 'pk' in json.keys():
+    def validate(self, json_model, model_name): 
+        if not 'pk' in json_model.keys():
             raise falcon.HTTPBadRequest('Failed data validation',
                     description='"pk" is a required property for all models')
+        if not 'modelName' in json_model.keys():
+            raise falcon.HTTPBadRequest('Failed data validation',
+                    description='"modelName" is a required property for all models')
         try:
-            schema = self.__get_schema(model_name)
-            jsc.validate(json, schema, format_checker=jsc.FormatChecker())
+            schema = self.schema_dict.get(model_name)
+            if not schema:
+                schema_path = 'app/schemas/{}.json'.format(model_name)
+                schema = json.loads(open(schema_path).read())
+                # could be loaded from external directory/file
+                self.schema_dict[model_name] = schema
+
+            jsc.validate(json_model, schema, format_checker=jsc.FormatChecker())
+
+        except FileNotFoundError as e:
+            raise falcon.HTTPBadRequest('Missing schema!',
+                    'There is no schema for model: "{}".'.format(model_name))
+
         except jsc.ValidationError as e:
             raise falcon.HTTPBadRequest('Failed data validation', description=e.message)
 
+        except jsc.exceptions.SchemaError as e:
+            raise falcon.HTTPInternalServerError(
+                    'Schema is invalid for model {}!'.format(model_name),
+                    description=e.message)
 
 class Collection:
 

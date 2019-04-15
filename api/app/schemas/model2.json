@@ -3,7 +3,8 @@
   "type": "object",
   "properties": {
     "pk": {"type": "string"},
-    "size": {"type": "int"}
+    "size": {"type": "number"},
+    "modelName": {"type": "string"}
   },
-  "required": ["pk", "size"]
+  "required": ["pk", "size", "modelName"]
 }
