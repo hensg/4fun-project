@@ -26,19 +26,19 @@ API status
 
 Get/Scan collection (lexicographically sorted)
     
-    curl localhost:8000/model1s?row_start=item_1&row_stop=item_2
+    curl localhost:8000/v1/model1?row_start=item_1&row_stop=item_2
 
 Post collection
 
-    curl -XPOST localhost:8000/model1s -d '{"pk": "item_1", "score": "0.2"}'
+    curl -XPOST localhost:8000/v1/model1 -H 'Content-type: application/json' -d '{"pk": "item_1", "score": "0.2", "modelName": "model1", "version": "v1"}'
 
 Get item
     
-    curl localhost:8000/model1s/item_1
+    curl localhost:8000/v1/model1/item_1
 
 Put item
 
-    curl -XPUT localhost:8000/model1s/item_1 -d '{"pk": "item_1", "score": "0.2"}' -H 'Content-Type: application/json'
+    curl -XPUT localhost:8000/v1/model1/item_1 -d '{"pk": "item_1", "score": "0.2", "modelName": "model1", "version": "v1"}' -H 'Content-Type: application/json'
 
 
 Prometheus metrics

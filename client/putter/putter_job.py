@@ -22,12 +22,13 @@ def send_to_api(line, method='POST', attempt=1):
     try:
         model_json = json.loads(line)
         model_name = model_json.get('modelName', None)
+        version = model_json.get('version', None)
 
         if method == 'POST':
-            endpoint = 'http://{}/{}'.format(api_host_port, model_name)
+            endpoint = 'http://{}/{}/{}'.format(api_host_port, version, model_name)
         elif method == 'PUT':
             pk = model_json.get('pk', None)
-            endpoint = 'http://{}/{}/{}'.format(api_host_port, model_name, pk)
+            endpoint = 'http://{}/{}/{}/{}'.format(api_host_port, version, model_name, pk)
 
         headers = {'Content-Type': 'application/json'}
         response = requests.request(method, endpoint, headers=headers, data=line)

@@ -4,7 +4,7 @@ from falcon import testing
 import pytest
 import json
 
-import app.app
+import api.api
 
 @pytest.fixture
 def mock_db():
@@ -19,7 +19,7 @@ def mock_db():
 
 @pytest.fixture()
 def client(mock_db):
-    return testing.TestClient(app.app.create_app(mock_db))
+    return testing.TestClient(api.api.create_app(mock_db))
 
 def test_api_status_ok(client):
     result = client.simulate_get(path='/')

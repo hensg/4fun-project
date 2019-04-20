@@ -17,13 +17,14 @@ services:
       - "./database/tables.txt:/tables.txt"
       - "./database/data:/data"
   api:
-    build: api/
+    build: app/
     ports:
       - "8000:8000"
     links:
       - hbase-docker
     depends_on:
       - hbase-docker
+
   prometheus:
     image: prom/prometheus
     ports:

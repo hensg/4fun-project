@@ -1,0 +1,11 @@
+{
+  "title": "Shema for data model 1",
+  "type": "object",
+  "properties": {
+    "pk": {"type": "string"},
+    "score": {"type":"string"},
+    "modelName": {"type": "string"},
+    "version": {"type":"string"}
+  },
+  "required": ["pk", "score", "modelName", "version"]
+}

@@ -5,7 +5,7 @@ EXPOSE 8000
 COPY ./requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
-COPY ./app workdir/app
+COPY ./api workdir/api
 WORKDIR workdir
 
-CMD ["gunicorn", "--workers", "8", "-b", "0.0.0.0:8000", "app.app:get_app()"]
+CMD ["gunicorn", "--workers", "8", "-b", "0.0.0.0:8000", "api.api:get_app()"]

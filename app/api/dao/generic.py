@@ -8,10 +8,10 @@ class GenericDAO:
         self.db_manager = db_manager
         self.table_name = 'models'
 
-    def __full_key(self, model_name, key):
-        return '{}|{}'.format(model_name, key)
+    def __full_key(self, model_name, version, key):
+        return '{}|{}|{}'.format(model_name, version, key)
 
-    def put(self, model_name, key, values):
+    def put(self, model_name, version, key, values):
         """
         Put a row into hbase
 
@@ -20,21 +20,21 @@ class GenericDAO:
             values (bytes): a dict containing cols and values
         """
         with self.db_manager.pool().connection() as conn:
-            full_key = self.__full_key(model_name, key)
+            full_key = self.__full_key(model_name, version, key)
             conn.table(self.table_name).put(full_key, values)
 
-    def scan(self, model_name, row_start=None, row_stop=None, limit=100):
+    def scan(self, model_name, version, row_start=None, row_stop=None, limit=100):
         """scan a batch of rows from hbase, a sample"""
         sample_rows = []
         with self.db_manager.pool().connection() as conn:
             table = conn.table(self.table_name)
-            full_key_start = self.__full_key(model_name, row_start)
-            full_key_stop = self.__full_key(model_name, row_stop)
+            full_key_start = self.__full_key(model_name, version, row_start)
+            full_key_stop = self.__full_key(model_name, version, row_stop)
             for row in table.scan(row_start=full_key_start, row_stop=full_key_stop, limit=limit):
                 sample_rows.append(row)
         return sample_rows
 
-    def get(self, model_name, key):
+    def get(self, model_name, version, key):
         """
         Get a row from hbase
 
@@ -45,10 +45,10 @@ class GenericDAO:
         """
         with self.db_manager.pool().connection() as conn:
             table = conn.table(self.table_name)
-            full_key = self.__full_key(model_name, key)
+            full_key = self.__full_key(model_name, version, key)
             return table.row(full_key)
 
-    def delete(self, model_name, key):
+    def delete(self, model_name, version, key):
         """
         Delete a row in hbase
 
@@ -57,5 +57,5 @@ class GenericDAO:
         """
         with self.db_manager.pool().connection() as conn:
             table = conn.table(self.table_name)
-            full_key = self.__full_key(model_name, key)
+            full_key = self.__full_key(model_name, version, key)
             table.delete(full_key)

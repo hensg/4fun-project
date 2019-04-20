@@ -1,0 +1,11 @@
+{
+  "title": "Shema for data model 1",
+  "type": "object",
+  "properties": {
+    "pk": {"type": "string"},
+    "size": {"type":"number"},
+    "modelName": {"type": "string"},
+    "version": {"type":"string"}
+  },
+  "required": ["pk", "size", "modelName", "version"]
+}

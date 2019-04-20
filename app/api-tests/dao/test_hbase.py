@@ -1,8 +1,8 @@
 import happybase_mock as happybase
 import pytest
 
-from app.dao.generic import GenericDAO
-from app.models.generic import Generic
+from api.dao.generic import GenericDAO
+from api.models.generic import Generic
 
 TABLE_NAME='models'
 MODEL_NAME='model1'
@@ -27,8 +27,8 @@ def test_model1dao_put_and_get(mock_db_with_table_created):
     key = 'a'
     generic_model = Generic(key, {'score':'99'})
 
-    dao.put(MODEL_NAME, generic_model.pk, generic_model.to_hbase())
-    row = dao.get(MODEL_NAME, key)
+    dao.put(MODEL_NAME, 'v1', generic_model.pk, generic_model.to_hbase())
+    row = dao.get(MODEL_NAME, 'v1', key)
 
     actually_model1 = Generic.from_hbase(key, row)
     assert actually_model1.pk == generic_model.pk
@@ -39,12 +39,12 @@ def test_model1dao_put_and_delete(mock_db_with_table_created):
     key = 'a'
     generic_model = Generic(key, {'score':'99'})
 
-    dao.put(MODEL_NAME, generic_model.pk, generic_model.to_hbase())
-    row = dao.get(MODEL_NAME, key)
+    dao.put(MODEL_NAME, 'v1', generic_model.pk, generic_model.to_hbase())
+    row = dao.get(MODEL_NAME, 'v1', key)
     assert row != None
     
-    dao.delete(MODEL_NAME, key)
-    row = dao.get(MODEL_NAME, key)
+    dao.delete(MODEL_NAME, 'v1', key)
+    row = dao.get(MODEL_NAME, 'v1', key)
     assert row == {}
 
 def test_model1dao_scan(mock_db_with_table_created):
@@ -54,7 +54,7 @@ def test_model1dao_scan(mock_db_with_table_created):
         for i in range(200)
     ]
     for r in rows:
-        dao.put(MODEL_NAME, r.pk, r.to_hbase())
+        dao.put(MODEL_NAME, 'v1', r.pk, r.to_hbase())
 
-    scanned = dao.scan(MODEL_NAME, row_start='a', row_stop='c')
+    scanned = dao.scan(MODEL_NAME, 'v1', row_start='a', row_stop='c')
     assert len(list(scanned)) == 2
