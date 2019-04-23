@@ -32,10 +32,9 @@ except docker.errors.ImageNotFound:
     _, logs = dc.images.build(path='{}/putter/'.format(pwd), tag=DOCKER_IMAGE_NAME)
     print(logs)
 
-logs = dc.images.build(path='{}/putter/'.format(pwd), tag=DOCKER_IMAGE_NAME)
 c = dc.containers.run(
-    image='client-putter',
-    command='/putter_job.py {} /{} {}'.format(host, path, overwrite_if_exists),
+    image=DOCKER_IMAGE_NAME,
+    command='/putter_job.py {} /{}'.format(host, path),
     network_mode='host',
     remove=True,
     detach=True,

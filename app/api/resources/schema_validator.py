@@ -9,12 +9,6 @@ class SchemaValidator:
         self.schema_dict = {}
 
     def validate(self, json_data, version, model_name): 
-        if not 'pk' in json_data.keys():
-            raise falcon.HTTPBadRequest('Failed data validation',
-                    description='"pk" is a required property for all models')
-        if not 'modelName' in json_data.keys():
-            raise falcon.HTTPBadRequest('Failed data validation',
-                    description='"modelName" is a required property for all models')
         try:
             schema = self.schema_dict.get(model_name)
             if not schema:
