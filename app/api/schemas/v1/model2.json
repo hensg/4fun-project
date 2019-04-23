@@ -2,10 +2,23 @@
   "title": "Shema for data model 1",
   "type": "object",
   "properties": {
-    "pk": {"type": "string"},
-    "size": {"type":"number"},
     "modelName": {"type": "string"},
-    "version": {"type":"string"}
+    "pk": {"type": "string"},
+    "version": {"type": "string"},
+    "history": {
+      "type": "object",
+      "patternProperties": {
+        "d{4}-d{2}-d{2}": {
+          "type": "object",
+          "properties": {
+            "size": {"type": "string"},
+            "sizeB": {"type": "string"},
+            "sizeC": {"type": "string"}
+          },
+          "required": ["size"]
+        }
+      }
+    }
   },
-  "required": ["pk", "size", "modelName", "version"]
+  "required": ["pk", "version", "history", "modelName"]
 }
