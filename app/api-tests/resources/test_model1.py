@@ -71,9 +71,19 @@ def test_get_collection_with_pagination(mock_db, client):
 def test_post_collection_success(client):
     body = {
         'pk': 'a',
-        'score': '0.9',
         'modelName': 'model1',
-        'version': 'v1'
+        'version': 'v1',
+        'history': {
+            '2018-01-01': {
+                'score': '9'
+            },
+            '2018-02-01': {
+                'score': 'A+'
+            },
+            '2018-03-01': {
+                'score': 'B-'
+            }
+        }
     }
     result = client.simulate_post(
             path='/v1/model1',
@@ -96,20 +106,24 @@ def test_post_collection_with_wrong_schema(client):
             path='/v1/model1',
             json=body)
     assert result.status == falcon.HTTP_400
-    assert result.json == {'title': 'Failed data validation',
-            'description': '"pk" is a required property for all models'}
 
 def test_put_item_with_success(client):
     body = {
         'pk': 'a',
-        'size': 9,
         'modelName': 'model2',
-        'version': 'v1'
+        'version': 'v1',
+        'history': {
+            '2019-01-01': {
+                'size': 'AAA'
+            },
+            '2019-02-01': {
+                'size': 'AAALarge'
+            }
+        }
     }
     result = client.simulate_put(
             path='/v1/model2/a',
             json=body)
-    assert result.text == ''
     assert result.status == falcon.HTTP_200
 
 def test_put_item_with_wrong_version(client):
@@ -152,8 +166,6 @@ def test_put_item_with_invalid_json_schema(client):
             path='/v1/model1/a',
             json=body)
     assert result.status == falcon.HTTP_400
-    assert result.json == {'title': 'Failed data validation',
-            'description': '"pk" is a required property for all models'}
 
 def test_get_item_with_success(mock_db, client):
     with mock_db.pool().connection() as conn:

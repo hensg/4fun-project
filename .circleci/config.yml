@@ -11,7 +11,7 @@ jobs:
 
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "api/requirements.txt" }}
+            - v1-dependencies-{{ checksum "app/requirements.txt" }}
             - v1-dependencies-
       - run:
           command: |  
@@ -20,14 +20,14 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            cd api && make setup-venv
+            cd app && make setup-venv
 
       - save_cache:
           paths:
-            - ./api/venv
-          key: v1-dependencies-{{ checksum "api/requirements.txt" }}
+            - ./app/venv
+          key: v1-dependencies-{{ checksum "app/requirements.txt" }}
 
       - run:
           name: run tests
           command: |
-            cd api && make test
+            cd app && make test
