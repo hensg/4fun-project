@@ -56,11 +56,6 @@ def save_in_api(line, attempt=1):
     version = line_json.get('version', None)
     buildDate = line_json.get('buildDate', None)
 
-    if not pk or not model_name or not version or not buildDate:
-        failure_acc += 1
-        return {'success': False,
-                'err': 'Error! "pk", "modelName", "version" and "buildDate" are required properties'}
-
     try:
         existing_item = get_data_from_api(api_host_port, version, model_name, pk)
         item_to_update_with_history = add_history_to_model(existing_item, line_json, version, model_name, pk, buildDate)
