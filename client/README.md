@@ -6,7 +6,7 @@ Spark job that process jsonlines file and post data to API
 
 Job requires 3 args:
 - API host and port to post data
-- resource API path (host:port/**model1s**)
+- resource API path (host:port**/v1/model1**)
 - jsonline file
 
 Environment requirements:
@@ -18,10 +18,10 @@ Environment requirements:
     make setup-venv
     source venv/bin/activate
     ./generate_jsonlines.py
-    ./client.py --overwrite-if-exists localhost:8000 sample.jsonl
+    ./client.py localhost:8000 sample.jsonl
 
 - make setup-venv: will setup virtual env with requirements.
-- generate_jsonlines.py: create a file containing json model1 schema lines
+- generate_jsonlines.py: create a file containing json model1/model2 schema lines
 - client.py: execute job in a spark docker container
 
 
